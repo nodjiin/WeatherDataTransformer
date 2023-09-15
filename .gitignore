@@ -24,3 +24,6 @@ node_modules/
 # build dir
 dist/
 
+# tests 
+tests/data/
+coverage/
