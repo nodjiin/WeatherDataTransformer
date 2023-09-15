@@ -6,6 +6,11 @@ const forbiddenChars: string = process.env.FORBIDDEN_CHARS || `~!@$%^&*()=+[]{};
 const inputDir: string = process.env.INPUT_DIR || __dirname // TODO(AC) safer default
 
 function validateFileName(fileName: string): boolean {
+    if (fileName === '' || fileName === null || typeof fileName !== 'string') {
+        console.error(`Invalid filename value '${fileName}'.`)
+        return false
+    }
+
     // check file extensions
     const fileExtension = path.extname(fileName).toLowerCase()
     if (!allowedExtensions.includes(fileExtension)) {
