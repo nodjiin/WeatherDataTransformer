@@ -1,11 +1,11 @@
 import path from 'path'
 import { safeLogError } from '../log/errLoggers'
 
-function validateFileName(fileName: string): boolean {
-    // TODO(AC) keep as default value and make configurable through an env variable
-    const allowedExtensions = ['.txt', '.json']
-    const forbiddenChars = ['~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '=', '+', '[', ']', '{', '}', ';', ':', "'", '"', '<', '>', ',', '?', '|']
+const allowedExtensions: string[] = process.env.ALLOWED_EXTENSIONS ? process.env.ALLOWED_EXTENSIONS.split(',') : ['.txt', '.json']
+const forbiddenChars: string = process.env.FORBIDDEN_CHARS || `~!@$%^&*()=+[]{};:'"<>,?|`
+const inputDir: string = process.env.INPUT_DIR || __dirname // TODO(AC) safer default
 
+function validateFileName(fileName: string): boolean {
     // check file extensions
     const fileExtension = path.extname(fileName).toLowerCase()
     if (!allowedExtensions.includes(fileExtension)) {
@@ -35,7 +35,6 @@ export function safeParseInputFilename(fileName: string): string | null {
         return null
     }
 
-    const inputDir = __dirname // TODO(AC) move to env variable, choose a safer default value
     let fullPath = null
     try {
         fullPath = path.join(inputDir, fileName)
