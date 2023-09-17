@@ -27,25 +27,9 @@ async function main() {
     const endRange = safeParseInputDate(options.end_range)
     const outData = toLineSeriesChartFormat(weatherData, startRange, endRange)
 
-    console.log(outData)
-    function printWeatherDataWithCondition(chartData: LineSeriesWeatherChartData) {
-        for (const key in chartData) {
-            console.log(key)
-            const dataPoints = chartData[key]
-            let count = 0
-            dataPoints.forEach((dataPoint) => {
-                if (dataPoint.weather_condition !== null) {
-                    count++
-                    console.log(dataPoint)
-                }
-            })
-            console.log(count)
-        }
-    }
-    printWeatherDataWithCondition(outData)
-
     // TODO(AC) safely parse the remaining options
     // TODO(AC) write output to file or stdout
+    // TODO(AC) unit tests the transformer function
 }
 
 main()
