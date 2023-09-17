@@ -1,11 +1,10 @@
-import { safeParseInputFilename, safeParseWeatherData } from '../../src/modules/io/inputParsers'
+import { safeParseInputDate, safeParseInputFilename, safeParseWeatherData } from '../../src/modules/io/inputParsers'
 
 describe('inputParsers', () => {
+    beforeEach(() => {
+        console.error = jest.fn()
+    })
     describe('safeParseInputFilename', () => {
-        beforeEach(() => {
-            console.error = jest.fn()
-        })
-
         it('should return null for non-string values', () => {
             expect(safeParseInputFilename(123 as any)).toBeNull()
             expect(safeParseInputFilename(null as any)).toBeNull()
@@ -84,6 +83,25 @@ describe('inputParsers', () => {
         it('should return null for valid JSON but invalid weather data structure', () => {
             const invalidWeatherData = `{"cityName": {"name": "City Name"}}`
             expect(safeParseWeatherData(invalidWeatherData)).toBeNull()
+        })
+    })
+
+    describe('safeParseInputDate', () => {
+        it('should return null for an empty string', () => {
+            const result = safeParseInputDate('')
+            expect(result).toBeNull()
+        })
+
+        it('should return null for an invalid date string', () => {
+            const result = safeParseInputDate('2023-25-25 25:60 AM')
+            expect(result).toBeNull()
+        })
+
+        it('should return timestamp for a valid date string', () => {
+            const validDateString = '2023-09-15 10:00 AM'
+            const expectedTimestamp = 1694743200000
+            const result = safeParseInputDate(validDateString)
+            expect(result).toBe(expectedTimestamp)
         })
     })
 })
