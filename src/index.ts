@@ -2,6 +2,8 @@ import { Command } from 'commander'
 import { InputReader } from './types/io'
 import { FileInputReader, StdinInputReader } from './modules/io/inputReaders'
 import { safeParseInputDate, safeParseWeatherData } from './modules/io/inputParsers'
+import { toLineSeriesChartFormat } from './modules/weather/transformers'
+import { LineSeriesWeatherChartData } from './types/dtos'
 
 async function main() {
     const program = new Command()
@@ -23,8 +25,26 @@ async function main() {
     const weatherData = safeParseWeatherData(dataString)
     const startRange = safeParseInputDate(options.start_range)
     const endRange = safeParseInputDate(options.end_range)
+    const outData = toLineSeriesChartFormat(weatherData, startRange, endRange)
+
+    console.log(outData)
+    function printWeatherDataWithCondition(chartData: LineSeriesWeatherChartData) {
+        for (const key in chartData) {
+            console.log(key)
+            const dataPoints = chartData[key]
+            let count = 0
+            dataPoints.forEach((dataPoint) => {
+                if (dataPoint.weather_condition !== null) {
+                    count++
+                    console.log(dataPoint)
+                }
+            })
+            console.log(count)
+        }
+    }
+    printWeatherDataWithCondition(outData)
+
     // TODO(AC) safely parse the remaining options
-    // TODO(AC) data transformation
     // TODO(AC) write output to file or stdout
 }
 

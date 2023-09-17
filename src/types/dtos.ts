@@ -40,3 +40,19 @@ export type Weather = z.infer<typeof WeatherSchema>
 export type WeatherData = z.infer<typeof WeatherDataSchema>
 export type CityWeather = z.infer<typeof CityWeatherSchema>
 export type WeatherInformation = z.infer<typeof WeatherInformationSchema>
+
+export type WeatherCondition = {
+    wind_speed: number
+    temperature: number
+    pressure: number
+    humidity: number
+}
+
+export type WeatherDataPoint = {
+    timestamp: number
+    weather_condition: WeatherCondition | null
+}
+
+export type LineSeriesWeatherChartData = {
+    [key: string]: WeatherDataPoint[]
+}

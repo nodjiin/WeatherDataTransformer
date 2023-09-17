@@ -55,13 +55,13 @@ export function safeParseInputFilename(fileName: string): string | null {
     return fullPath
 }
 
-export function safeParseWeatherData(stringData: string): WeatherInformation | null {
+export function safeParseWeatherData(stringData: string): WeatherInformation {
     let rawObject
     try {
         rawObject = JSON.parse(stringData)
     } catch (err) {
         safeLogError(err, 'Error raised while trying to parse the input in a JSON object')
-        return null
+        return {}
     }
 
     const validationResult = WeatherInformationSchema.safeParse(rawObject)
@@ -69,7 +69,7 @@ export function safeParseWeatherData(stringData: string): WeatherInformation | n
         return validationResult.data
     } else {
         safeLogError(validationResult.error, 'Error raised during input data parsing/validation')
-        return null
+        return {}
     }
 }
 
