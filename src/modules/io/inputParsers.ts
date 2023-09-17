@@ -1,9 +1,12 @@
 import path from 'path'
 import { safeLogError } from '../log/errLoggers'
+import { WeatherInformation, WeatherInformationSchema } from '../../types/dtos'
 
 const allowedExtensions: string[] = process.env.ALLOWED_EXTENSIONS ? process.env.ALLOWED_EXTENSIONS.split(',') : ['.txt', '.json']
 const forbiddenChars: string = process.env.FORBIDDEN_CHARS || `~!@$%^&*()=+[]{};:'"<>,?|`
-const inputDir: string = process.env.INPUT_DIR || __dirname // TODO(AC) safer default
+// I'm using process.cwd for the sake of simplicity here, on a real production environment
+// I would discuss and agree with the team a safer default value
+const inputDir: string = process.env.INPUT_DIR || process.cwd()
 
 function validateFileName(fileName: string): boolean {
     if (fileName === '' || fileName === null || typeof fileName !== 'string') {
@@ -44,9 +47,27 @@ export function safeParseInputFilename(fileName: string): string | null {
     try {
         fullPath = path.join(inputDir, fileName)
     } catch (err) {
-        safeLogError(err, `error raised while trying to build the full path for the input file '${err}'`)
+        safeLogError(err, `Error raised while trying to build the full path for the input file '${fileName}'`)
         return null
     }
 
     return fullPath
+}
+
+export function safeParseWeatherData(stringData: string): WeatherInformation | null {
+    let rawObject
+    try {
+        rawObject = JSON.parse(stringData)
+    } catch (err) {
+        safeLogError(err, 'Error raised while trying to parse the input in a JSON object')
+        return null
+    }
+
+    const validationResult = WeatherInformationSchema.safeParse(rawObject)
+    if (validationResult.success) {
+        return validationResult.data
+    } else {
+        safeLogError(validationResult.error, 'Error raised during input data parsing/validation')
+        return null
+    }
 }
