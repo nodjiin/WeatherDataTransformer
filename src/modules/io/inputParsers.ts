@@ -1,11 +1,12 @@
 import path from 'path'
 import { safeLogError } from '../log/errLoggers'
 import { WeatherInformation, WeatherInformationSchema } from '../../types/dtos'
+import moment from 'moment'
 
 const allowedExtensions: string[] = process.env.ALLOWED_EXTENSIONS ? process.env.ALLOWED_EXTENSIONS.split(',') : ['.txt', '.json']
 const forbiddenChars: string = process.env.FORBIDDEN_CHARS || `~!@$%^&*()=+[]{};:'"<>,?|`
 // I'm using process.cwd for the sake of simplicity here, on a real production environment
-// I would discuss and agree with the team a safer default value
+// I would discuss and agree with the team for a safer default value
 const inputDir: string = process.env.INPUT_DIR || process.cwd()
 
 function validateFileName(fileName: string): boolean {
@@ -70,4 +71,20 @@ export function safeParseWeatherData(stringData: string): WeatherInformation | n
         safeLogError(validationResult.error, 'Error raised during input data parsing/validation')
         return null
     }
+}
+
+const inputDateFormatString: string = process.env.INPUT_DATE_FORMAT_STRING || 'YYYY-MM-DD HH:mm A'
+export function safeParseInputDate(dateString: string): number | null {
+    if (dateString === '') {
+        return null
+    }
+
+    const date = moment(dateString, inputDateFormatString)
+    if (!date.isValid()) {
+        //skipping checks on moment error flags for brevity
+        console.error(`Invalid input date '${dateString}'. Expected format ${inputDateFormatString}`)
+        return null
+    }
+
+    return date.valueOf()
 }

@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import { InputReader } from './types/io'
 import { FileInputReader, StdinInputReader } from './modules/io/inputReaders'
-import { safeParseWeatherData } from './modules/io/inputParsers'
+import { safeParseInputDate, safeParseWeatherData } from './modules/io/inputParsers'
 
 async function main() {
     const program = new Command()
@@ -20,7 +20,9 @@ async function main() {
 
     const inReader: InputReader = options.input_file !== '' ? new FileInputReader(options.input_file) : new StdinInputReader()
     const dataString = await inReader.read()
-    console.log(safeParseWeatherData(dataString))
+    const weatherData = safeParseWeatherData(dataString)
+    const startRange = safeParseInputDate(options.start_range)
+    const endRange = safeParseInputDate(options.end_range)
     // TODO(AC) safely parse the remaining options
     // TODO(AC) data transformation
     // TODO(AC) write output to file or stdout
