@@ -1,33 +1,34 @@
-import { safeParseInputDate, safeParseInputFilename, safeParseWeatherData } from '../../src/modules/io/inputParsers'
+import { safeParseInputDate, safeParseFilename, safeParseWeatherData } from '../../src/modules/io/inputParsers'
 
 describe('inputParsers', () => {
+    const dirname = 'testdir'
     beforeEach(() => {
         console.error = jest.fn()
     })
     describe('safeParseInputFilename', () => {
         it('should return null for non-string values', () => {
-            expect(safeParseInputFilename(123 as any)).toBeNull()
-            expect(safeParseInputFilename(null as any)).toBeNull()
-            expect(safeParseInputFilename(undefined as any)).toBeNull()
+            expect(safeParseFilename(123 as any, dirname)).toBeNull()
+            expect(safeParseFilename(null as any, dirname)).toBeNull()
+            expect(safeParseFilename(undefined as any, dirname)).toBeNull()
         })
 
         it('should reject file names with disallowed extensions', () => {
-            const result = safeParseInputFilename('testfile.disallowed')
+            const result = safeParseFilename('testfile.disallowed', dirname)
             expect(result).toBeNull()
         })
 
         it('should reject file names with forbidden characters', () => {
-            const result = safeParseInputFilename('test~file.txt')
+            const result = safeParseFilename('test~file.txt', dirname)
             expect(result).toBeNull()
         })
 
         it('should reject file names attempting directory traversal', () => {
-            const result = safeParseInputFilename('../testfile.txt')
+            const result = safeParseFilename('../testfile.txt', dirname)
             expect(result).toBeNull()
         })
 
         it('should return full path for valid filenames', () => {
-            const result = safeParseInputFilename('testfile.txt')
+            const result = safeParseFilename('testfile.txt', dirname)
             expect(result).toContain('testfile.txt')
         })
     })
