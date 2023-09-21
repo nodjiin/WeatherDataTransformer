@@ -5,9 +5,6 @@ import moment from 'moment'
 
 const allowedExtensions: string[] = process.env.ALLOWED_EXTENSIONS ? process.env.ALLOWED_EXTENSIONS.split(',') : ['.txt', '.json']
 const forbiddenChars: string = process.env.FORBIDDEN_CHARS || `~!@$%^&*()=+[]{};:'"<>,?|`
-// I'm using process.cwd for the sake of simplicity here, on a real production environment
-// I would discuss and agree with the team for a safer default value
-const inputDir: string = process.env.INPUT_DIR || process.cwd()
 
 function validateFileName(fileName: string): boolean {
     if (fileName === '' || fileName === null || typeof fileName !== 'string') {
@@ -39,20 +36,17 @@ function validateFileName(fileName: string): boolean {
     return true
 }
 
-export function safeParseInputFilename(fileName: string): string | null {
+export function safeParseFilename(fileName: string, safeDir: string): string | null {
     if (!validateFileName(fileName)) {
         return null
     }
 
-    let fullPath = null
     try {
-        fullPath = path.join(inputDir, fileName)
+        return path.join(safeDir, fileName)
     } catch (err) {
         safeLogError(err, `Error raised while trying to build the full path for the input file '${fileName}'`)
         return null
     }
-
-    return fullPath
 }
 
 export function safeParseWeatherData(stringData: string): WeatherInformation {

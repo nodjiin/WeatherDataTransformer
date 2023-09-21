@@ -1,13 +1,16 @@
 import { InputReader } from '../../types/io'
 import fs from 'fs/promises'
-import { safeParseInputFilename } from './inputParsers'
+import { safeParseFilename } from './inputParsers'
 import { safeLogError } from '../log/errLoggers'
 
 export class FileInputReader implements InputReader {
+    // I'm using process.cwd for the sake of simplicity here, on a real production environment
+    // I would discuss and agree with the team for a safer default value
+    readonly inputDir: string = process.env.INPUT_DIR || process.cwd()
     filePath: string | null
 
     constructor(fileName: string) {
-        this.filePath = safeParseInputFilename(fileName)
+        this.filePath = safeParseFilename(fileName, this.inputDir)
     }
 
     async read(): Promise<string> {
