@@ -1,9 +1,9 @@
 import { Command } from 'commander'
-import { InputReader } from './types/io'
+import { InputReader, OutputWriter } from './types/io'
 import { FileInputReader, StdinInputReader } from './modules/io/inputReaders'
 import { safeParseInputDate, safeParseWeatherData } from './modules/io/inputParsers'
 import { toLineSeriesChartFormat } from './modules/weather/transformers'
-import { LineSeriesWeatherChartData } from './types/dtos'
+import { FileOutputWriter, StdoutOutputWriter } from './modules/io/outputWriters'
 
 async function main() {
     const program = new Command()
@@ -26,10 +26,11 @@ async function main() {
     const startRange = safeParseInputDate(options.start_range)
     const endRange = safeParseInputDate(options.end_range)
     const outData = toLineSeriesChartFormat(weatherData, startRange, endRange)
+    const outWriter: OutputWriter = options.output_file !== '' ? new FileOutputWriter(options.input_file) : new StdoutOutputWriter()
+    outWriter.write(JSON.stringify(outData))
 
-    // TODO(AC) safely parse the remaining options
-    // TODO(AC) write output to file or stdout
-    // TODO(AC) unit tests the transformer function
+    // TODO(AC) finish unit testing
+    // TODO(AC) docs
 }
 
 main()
