@@ -1,5 +1,7 @@
 import { CityWeather, LineSeriesWeatherChartData, WeatherData, WeatherDataPoint, WeatherInformation } from '../../types/dtos'
 
+const dateObj = new Date()
+
 export function toLineSeriesChartFormat(data: WeatherInformation, start: number | null, end: number | null): LineSeriesWeatherChartData {
     const [startSeconds, endSeconds] = adjustRange(start, end, data)
     const totalHourPoints = (endSeconds - startSeconds) / 3600
@@ -75,8 +77,9 @@ function transformCityWeather(data: CityWeather, start: number, end: number, siz
     // initialize the array with null points
     let currentTs = start
     for (let i = 0; i < size; i++) {
+        dateObj.setTime(currentTs * 1000)
         points[i] = {
-            timestamp: currentTs,
+            timestamp: dateObj.toISOString(),
             weather_condition: null,
         }
 

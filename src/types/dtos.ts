@@ -49,7 +49,7 @@ export type WeatherCondition = {
 }
 
 export type WeatherDataPoint = {
-    timestamp: number
+    timestamp: string
     weather_condition: WeatherCondition | null
 }
 

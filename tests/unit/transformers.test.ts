@@ -74,6 +74,10 @@ describe('toLineSeriesChartFormat', () => {
         },
     }
 
+    const isoDate1 = '1970-01-01T01:00:00.000Z'
+    const isoDate2 = '1970-01-01T02:00:00.000Z'
+    const isoDate3 = '1970-01-01T03:00:00.000Z'
+
     const expectedWeather1: WeatherCondition = {
         wind_speed: 3,
         humidity: 65,
@@ -92,9 +96,9 @@ describe('toLineSeriesChartFormat', () => {
         const result = toLineSeriesChartFormat(mockData, 3600 * 1000, 10800 * 1000)
         expect(result).toHaveProperty('City1')
         expect(result.City1.length).toBe(2)
-        expect(result.City1[0].timestamp).toBe(3600)
+        expect(result.City1[0].timestamp).toBe(isoDate1)
         expect(result.City1[0].weather_condition).toEqual(expectedWeather1)
-        expect(result.City1[1].timestamp).toBe(7200)
+        expect(result.City1[1].timestamp).toBe(isoDate2)
         expect(result.City1[1].weather_condition).toEqual(expectedWeather2)
     })
 
@@ -102,25 +106,25 @@ describe('toLineSeriesChartFormat', () => {
         const result = toLineSeriesChartFormat(mockData, null, null)
         expect(result).toHaveProperty('City1')
         expect(result.City1.length).toBe(3)
-        expect(result.City1[0].timestamp).toBe(3600)
-        expect(result.City1[1].timestamp).toBe(7200)
-        expect(result.City1[2].timestamp).toBe(10800)
+        expect(result.City1[0].timestamp).toBe(isoDate1)
+        expect(result.City1[1].timestamp).toBe(isoDate2)
+        expect(result.City1[2].timestamp).toBe(isoDate3)
     })
 
     it('should handle missing end parameter', () => {
         const result = toLineSeriesChartFormat(mockData, 7200 * 1000, null)
         expect(result).toHaveProperty('City1')
         expect(result.City1.length).toBe(2)
-        expect(result.City1[0].timestamp).toEqual(7200)
-        expect(result.City1[1].timestamp).toEqual(10800)
+        expect(result.City1[0].timestamp).toBe(isoDate2)
+        expect(result.City1[1].timestamp).toBe(isoDate3)
     })
 
     it('should handle missing start parameter', () => {
         const result = toLineSeriesChartFormat(mockData, null, 7200 * 1000)
         expect(result).toHaveProperty('City1')
         expect(result.City1.length).toBe(2)
-        expect(result.City1[0].timestamp).toEqual(3600)
-        expect(result.City1[1].timestamp).toEqual(7200)
+        expect(result.City1[0].timestamp).toBe(isoDate1)
+        expect(result.City1[1].timestamp).toBe(isoDate2)
     })
 
     it('should log warning for processing value outside of the given range', () => {
