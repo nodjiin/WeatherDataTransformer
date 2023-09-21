@@ -26,9 +26,10 @@ describe('FileOutputWriter Integration Tests', () => {
         const testPayload: string = 'Integration Test Data'
 
         const writer = new FileOutputWriter(validFileName)
-        await writer.write(testPayload)
+        const result = await writer.write(testPayload)
 
         const writtenData: string = await fs.readFile(path.join(testOutputDir, validFileName), 'utf8')
+        expect(result).toBe(true)
         expect(writtenData).toBe(testPayload)
     })
 
@@ -37,7 +38,9 @@ describe('FileOutputWriter Integration Tests', () => {
         const testPayload: string = 'Test'
 
         const writer = new FileOutputWriter(invalidFileName)
-        await writer.write(testPayload)
+        const result = await writer.write(testPayload)
+
+        expect(result).toBe(false)
         await expect(fs.access(path.join(testOutputDir, invalidFileName))).rejects.toThrow()
     })
 })
