@@ -6,6 +6,8 @@
     "scripts": {
         "build": "tsc",
         "test": "jest",
+        "test:unit": "jest tests/unit",
+        "test:integration": "jest tests/integration",
         "lint": "eslint 'src/**/*.{ts}'"
     },
     "keywords": [],
