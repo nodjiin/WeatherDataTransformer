@@ -76,16 +76,16 @@ describe('inputParsers', () => {
             expect(safeParseWeatherData(validInput)).toBeTruthy()
         })
 
-        it('should return empty object for invalid JSON input', () => {
+        it('should return null for invalid JSON input', () => {
             const invalidJson = `{ "key": "value"`
             const result = safeParseWeatherData(invalidJson)
-            expect(Object.keys(result).length).toBe(0)
+            expect(result).toBeNull()
         })
 
-        it('should return empty object for valid JSON but invalid weather data structure', () => {
+        it('should return null for valid JSON but invalid weather data structure', () => {
             const invalidWeatherData = `{"cityName": {"name": "City Name"}}`
             const result = safeParseWeatherData(invalidWeatherData)
-            expect(Object.keys(result).length).toBe(0)
+            expect(result).toBeNull()
         })
     })
 
