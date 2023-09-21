@@ -20,10 +20,22 @@ function adjustRange(start: number | null, end: number | null, data: WeatherInfo
         const [dataStart, dataEnd] = discoverRange(data)
         start = start === null ? dataStart : start / 1000
         end = end === null ? dataEnd : end / 1000
+        end += 3600 // adjust end to include the last hour of data
     } else {
         //simply convert from milliseconds to seconds otherwise
         start /= 1000
         end /= 1000
+    }
+
+    // naive adjustment operations to To make sure we work with multiples of 3600
+    let remainder = start % 3600
+    if (remainder !== 0) {
+        start -= remainder
+    }
+
+    remainder = end % 3600
+    if (remainder !== 0) {
+        end += 3600 - remainder
     }
 
     return [start, end]
@@ -53,7 +65,6 @@ function discoverRange(data: WeatherInformation): number[] {
             }
         }
     }
-    out[1] += 3600 // adjust to fully include the last recorded hour
 
     return out
 }
@@ -86,7 +97,7 @@ function transformCityWeather(data: CityWeather, start: number, end: number, siz
 
 function fillDataPoint(points: WeatherDataPoint[], data: WeatherData, start: number, end: number) {
     const timestamp = data.dt
-    if (timestamp < start || timestamp > end) {
+    if (timestamp < start || timestamp >= end) {
         console.error(`Processing value outside of the given range: '${timestamp}'`)
         return
     }
