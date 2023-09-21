@@ -3,5 +3,5 @@ export interface InputReader {
 }
 
 export interface OutputWriter {
-    write(payload: string): Promise<void>
+    write(payload: string): Promise<boolean>
 }

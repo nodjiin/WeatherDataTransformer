@@ -5,6 +5,12 @@ import { safeParseInputDate, safeParseWeatherData } from './modules/io/inputPars
 import { toLineSeriesChartFormat } from './modules/weather/transformers'
 import { FileOutputWriter, StdoutOutputWriter } from './modules/io/outputWriters'
 
+enum ErrorCodes {
+    INPUT_READ_FAILURE = 1000,
+    INVALID_INPUT = 1001,
+    OUTPUT_WRITE_FAILURE = 1002,
+}
+
 async function main() {
     const program = new Command()
 
@@ -20,16 +26,29 @@ async function main() {
 
     const options = program.opts()
 
+    // read and parse
     const inReader: InputReader = options.input_file !== '' ? new FileInputReader(options.input_file) : new StdinInputReader()
     const dataString = await inReader.read()
+    if (dataString === '') {
+        process.exit(ErrorCodes.INPUT_READ_FAILURE)
+    }
+
     const weatherData = safeParseWeatherData(dataString)
+    if (weatherData === null) {
+        process.exit(ErrorCodes.INVALID_INPUT)
+    }
+
+    // transform
     const startRange = safeParseInputDate(options.start_range)
     const endRange = safeParseInputDate(options.end_range)
     const outData = toLineSeriesChartFormat(weatherData, startRange, endRange)
-    const outWriter: OutputWriter = options.output_file !== '' ? new FileOutputWriter(options.input_file) : new StdoutOutputWriter()
-    outWriter.write(JSON.stringify(outData))
 
-    // TODO(AC) finish unit testing
+    // write
+    const outWriter: OutputWriter = options.output_file !== '' ? new FileOutputWriter(options.input_file) : new StdoutOutputWriter()
+    if (!(await outWriter.write(JSON.stringify(outData)))) {
+        process.exit(ErrorCodes.OUTPUT_WRITE_FAILURE)
+    }
+
     // TODO(AC) docs
 }
 

@@ -13,22 +13,24 @@ export class FileOutputWriter implements OutputWriter {
         this.filePath = safeParseFilename(fileName, this.outputDir)
     }
 
-    async write(payload: string): Promise<void> {
+    async write(payload: string): Promise<boolean> {
         if (this.filePath === null) {
-            return
+            return false
         }
 
         try {
             await fs.writeFile(this.filePath, payload, 'utf8')
+            return true
         } catch (err) {
             safeLogError(err, `Error raised while trying to write output data to '${this.filePath}'.`)
+            return false
         }
     }
 }
 
 export class StdoutOutputWriter implements OutputWriter {
-    write(payload: string): Promise<void> {
+    write(payload: string): Promise<boolean> {
         console.log(payload)
-        return Promise.resolve()
+        return Promise.resolve(true)
     }
 }
