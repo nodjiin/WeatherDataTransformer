@@ -38,5 +38,5 @@ The starting point of the project is index.ts, which is directly placed inside t
 -   **Sample Execution**: To run the tool with example input, use the following command:
 
 ```
-node .\dist\index.js -i test\data\weather.json -s "2023-09-10 12:00 AM" -e "2023-09-13 12:00 AM"
+node .\dist\index.js -i tests\data\weather.json -s "2023-09-10 12:00 AM" -e "2023-09-13 12:00 AM"
 ```
