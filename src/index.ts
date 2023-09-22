@@ -45,11 +45,10 @@ async function main() {
 
     // write
     const outWriter: OutputWriter = options.output_file !== '' ? new FileOutputWriter(options.input_file) : new StdoutOutputWriter()
-    if (!(await outWriter.write(JSON.stringify(outData)))) {
+    const writeSuccess = await outWriter.write(JSON.stringify(outData))
+    if (!writeSuccess) {
         process.exit(ErrorCodes.OUTPUT_WRITE_FAILURE)
     }
-
-    // TODO(AC) docs
 }
 
 main()
