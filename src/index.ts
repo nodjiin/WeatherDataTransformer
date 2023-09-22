@@ -26,13 +26,14 @@ async function main() {
 
     const options = program.opts()
 
-    // read and parse
+    // read
     const inReader: InputReader = options.input_file !== '' ? new FileInputReader(options.input_file) : new StdinInputReader()
     const dataString = await inReader.read()
     if (dataString === '') {
         process.exit(ErrorCodes.INPUT_READ_FAILURE)
     }
 
+    // parse
     const weatherData = safeParseWeatherData(dataString)
     if (weatherData === null) {
         process.exit(ErrorCodes.INVALID_INPUT)
