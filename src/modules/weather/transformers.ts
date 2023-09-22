@@ -1,7 +1,18 @@
 import { CityWeather, LineSeriesWeatherChartData, WeatherData, WeatherDataPoint, WeatherInformation } from '../../types/dtos'
 
+/**
+ * Date object used for converting timestamps.
+ */
 const dateObj = new Date()
 
+/**
+ * Transforms the provided weather data into a format suitable for a line series chart.
+ *
+ * @param data - The weather information.
+ * @param start - The start timestamp in milliseconds. If null the timestamp of the initial sample will be used instead.
+ * @param end - The end timestamp in milliseconds. If null the timestamp of the final sample will be used instead.
+ * @returns The transformed weather data.
+ */
 export function toLineSeriesChartFormat(data: WeatherInformation, start: number | null, end: number | null): LineSeriesWeatherChartData {
     const [startSeconds, endSeconds] = adjustRange(start, end, data)
     const totalHourPoints = (endSeconds - startSeconds) / 3600
@@ -16,6 +27,15 @@ export function toLineSeriesChartFormat(data: WeatherInformation, start: number 
     return outData
 }
 
+/**
+ * Adjusts the provided time range, converting from milliseconds to seconds.
+ * If no value has been provided for the start/end of the range this function will discover it by analysing the input data.
+ *
+ * @param start - The start timestamp in milliseconds.
+ * @param end - The end timestamp in milliseconds.
+ * @param data - The weather information.
+ * @returns An array containing the adjusted start and end timestamps in seconds.
+ */
 function adjustRange(start: number | null, end: number | null, data: WeatherInformation): number[] {
     // if the range has not been fully specified, automatically discover it by looking at the input data
     if (start === null || end === null) {
@@ -43,6 +63,12 @@ function adjustRange(start: number | null, end: number | null, data: WeatherInfo
     return [start, end]
 }
 
+/**
+ * Iterates the entire data set provided to locate the first and last recorded samples.
+ *
+ * @param data - The weather information.
+ * @returns An array containing the earliest and latest timestamps in the data.
+ */
 function discoverRange(data: WeatherInformation): number[] {
     const out = new Array<number>(2)
     out[0] = Number.MAX_SAFE_INTEGER
@@ -71,6 +97,16 @@ function discoverRange(data: WeatherInformation): number[] {
     return out
 }
 
+/**
+ * Transforms the weather data of a specific city into an array of data points for a line series chart.
+ * Each datapoint correspond to the weather status of the city at a specific hour (e.g. 00:00 AM, 01:00 AM)
+ *
+ * @param data - The weather data of a city.
+ * @param start - The start timestamp of the choosen range in seconds. Any sample taken before start will be discarded.
+ * @param end - The end timestamp of the choose range in seconds. Any sample taken after end will be discarded.
+ * @param size - The number of hours within the provided time range.
+ * @returns  An array of data points.
+ */
 function transformCityWeather(data: CityWeather, start: number, end: number, size: number): WeatherDataPoint[] {
     const points: WeatherDataPoint[] = new Array(size)
 
@@ -98,6 +134,14 @@ function transformCityWeather(data: CityWeather, start: number, end: number, siz
     return points
 }
 
+/**
+ * Populates the provided data points array with the weather data.
+ *
+ * @param points - The array of data points.
+ * @param data - The weather data.
+ * @param start - The start timestamp in seconds.
+ * @param end - The end timestamp in seconds.
+ */
 function fillDataPoint(points: WeatherDataPoint[], data: WeatherData, start: number, end: number) {
     const timestamp = data.dt
     if (timestamp < start || timestamp >= end) {
