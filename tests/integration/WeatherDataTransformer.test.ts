@@ -4,7 +4,7 @@ import fs from 'fs/promises'
 
 describe('Full WeatherDataTransformer flow test', () => {
     const scriptPath = path.resolve(__dirname, '../../dist/index.js')
-    const testOutputDir = path.join(__dirname, 'test-output')
+    const testOutputDir = path.join(__dirname, 'test-output-full')
     let inputData: string
     let formattedOutput: string
     const outputFile = 'testOutput.json'
