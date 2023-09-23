@@ -110,6 +110,8 @@ export function safeParseInputDate(dateString: string): number | null {
         return null
     }
 
+    // given the nature of the task I am following the assumption that the range value is provided in UTC format.
+    // This assumption may be naive and requires further investigation
     const date = moment.utc(dateString, inputDateFormatString)
     if (!date.isValid()) {
         //skipping checks on moment error flags for brevity
