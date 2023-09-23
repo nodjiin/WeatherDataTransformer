@@ -102,7 +102,7 @@ describe('inputParsers', () => {
 
         it('should return timestamp for a valid date string', () => {
             const validDateString = '2023-09-15 10:00 AM'
-            const expectedTimestamp = 1694743200000
+            const expectedTimestamp = 1694772000000
             const result = safeParseInputDate(validDateString)
             expect(result).toBe(expectedTimestamp)
         })

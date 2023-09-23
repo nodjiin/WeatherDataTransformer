@@ -110,7 +110,7 @@ export function safeParseInputDate(dateString: string): number | null {
         return null
     }
 
-    const date = moment(dateString, inputDateFormatString)
+    const date = moment.utc(dateString, inputDateFormatString)
     if (!date.isValid()) {
         //skipping checks on moment error flags for brevity
         console.error(`Invalid input date '${dateString}'. Expected format ${inputDateFormatString}`)
