@@ -36,7 +36,7 @@ describe('Full WeatherDataTransformer flow test', () => {
         delete process.env.OUTPUT_DIR
     })
 
-    it('should read from stdin and write to stdout', async () => {
+    it('should read from stdin and write to stdout', () => {
         const output = execSync(`node ${scriptPath}`, { encoding: 'utf8', input: inputData })
 
         expect(output).toBe(formattedOutput + '\n')
@@ -56,8 +56,17 @@ describe('Full WeatherDataTransformer flow test', () => {
         expect(output).toBe(formattedOutput)
     })
 
-    it('should read from file and write to stdout', async () => {
+    it('should read from file and write to stdout', () => {
         const output = execSync(`node ${scriptPath} -i ${inputFile}`, { encoding: 'utf8' })
+
+        expect(output).toBe(formattedOutput + '\n')
+    })
+
+    it('should read from file and write to stdout with the given range', async () => {
+        const extendedRangeoutput = await fs.readFile(path.join(__dirname, '../data/out72.json'), 'utf8')
+        const formattedOutput = JSON.stringify(JSON.parse(extendedRangeoutput))
+
+        const output = execSync(`node ${scriptPath} -i ${inputFile} -s "2023-09-10 12:00 AM" -e "2023-09-13 12:00 AM"`, { encoding: 'utf8' })
 
         expect(output).toBe(formattedOutput + '\n')
     })
